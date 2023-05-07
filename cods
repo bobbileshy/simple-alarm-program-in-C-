@@ -1,0 +1,41 @@
+#include <iostream>
+#include <ctime>
+#include <chrono>
+#include <thread>
+
+void alarm(int hours, int minutes) {
+    std::time_t t = std::time(nullptr);
+    std::tm* now = std::localtime(&t);
+    
+    now->tm_hour = hours;
+    now->tm_min = minutes;
+    now->tm_sec = 0;
+    
+    std::time_t alarmTime = std::mktime(now);
+    std::time_t currentTime = std::time(nullptr);
+    
+    double diffSeconds = std::difftime(alarmTime, currentTime);
+    
+    if (diffSeconds <= 0) {
+        std::cout << "Invalid alarm time. Please set a future time.\n";
+        return;
+    }
+    
+    std::this_thread::sleep_for(std::chrono::seconds(static_cast<long>(diffSeconds)));
+    
+    std::cout << "\nALARM!!! Wake up!\n";
+}
+
+int main() {
+    int hours, minutes;
+    
+    std::cout << "Enter the alarm time (24-hour format):\n";
+    std::cout << "Hours: ";
+    std::cin >> hours;
+    std::cout << "Minutes: ";
+    std::cin >> minutes;
+    
+    alarm(hours, minutes);
+    
+    return 0;
+}
